@@ -24,6 +24,7 @@ import java.util.concurrent.TimeUnit;
 
 import org.drools.compiler.Person;
 import org.drools.core.datasources.ListDataSource;
+import org.drools.core.event.DefaultAgendaEventListener;
 import org.drools.core.impl.DynamicallyBoundSessionImpl;
 import org.drools.core.ruleunit.RuleUnitFactory;
 import org.drools.core.time.SessionPseudoClock;
@@ -36,6 +37,7 @@ import org.kie.api.builder.Results;
 import org.kie.api.conf.EventProcessingOption;
 import org.kie.api.definition.KiePackage;
 import org.kie.api.definition.rule.Rule;
+import org.kie.api.event.rule.AfterMatchFiredEvent;
 import org.kie.api.event.rule.DebugAgendaEventListener;
 import org.kie.api.runtime.KieContainer;
 import org.kie.api.runtime.KieSession;
@@ -76,6 +78,11 @@ public class RuleTest {
                 ;
         session.setRuleUnitFactory( factory );
         
+        session.addEventListener(new DefaultAgendaEventListener(){
+            public void afterMatchFired(AfterMatchFiredEvent event) {
+                System.out.println("fired: "+event.getMatch().getRule().getName());
+            }
+        });
         session.addEventListener(new DebugAgendaEventListener());
 
         System.out.println("STEP INIT");
