@@ -43,6 +43,7 @@ import org.kie.api.runtime.KieContainer;
 import org.kie.api.runtime.KieSession;
 import org.kie.api.runtime.KieSessionConfiguration;
 import org.kie.api.runtime.conf.ClockTypeOption;
+import org.kie.api.runtime.rule.FactHandle;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -86,11 +87,17 @@ public class RuleTest {
         session.addEventListener(new DebugAgendaEventListener());
 
         System.out.println("STEP INIT");
-        session.insert(new WiFiDevice("mobile"));
+        FactHandle mobileFH = session.insert(new WiFiDevice("mobile"));
+        session.insert(new Device("TV", "off"));
         session.fireAllRules();
 
         System.out.println("STEP 1");
-        session.insert(new MotionDetected("LivingRoom"));
+        FactHandle motionFH = session.insert(new MotionDetected("LivingRoom"));
+        session.fireAllRules();
+        session.retract(motionFH);
+        
+        System.out.println("STEP 2");
+        session.retract(mobileFH);
         session.fireAllRules();
     }
 }

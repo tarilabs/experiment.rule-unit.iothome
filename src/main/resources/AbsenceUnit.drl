@@ -14,19 +14,14 @@
 */
 
 package org.drools.experiment.rule_unit.iothome;
-unit LivingRoomPresenceUnit
+unit AbsenceUnit
 
 import org.drools.core.ruleunit.Guard
+import org.drools.experiment.rule_unit.iothome.LivingRoomPresenceUnit;
 
-rule DO_LIVINGROOM
+rule DEVICES_OFF
 when
-  eval( true )
+  $d: Device(status == "on")
 then
-end
-
-rule LIVINGROOM_PRESENCE_TV
-when
-  $tv: Device(name == "TV", status == "off" )
-then
-  modify ($tv) { setStatus("on"); }
+  $d.setStatus("off");
 end
