@@ -16,12 +16,18 @@
 package org.drools.experiment.rule_unit.iothome;
 unit AbsenceUnit
 
-import org.drools.core.ruleunit.Guard
-import org.drools.experiment.rule_unit.iothome.LivingRoomPresenceUnit;
+import org.drools.experiment.rule_unit.iothome.UnattendedSuspiciousActivityUnit;
 
 rule DEVICES_OFF
 when
   $d: Device(status == "on")
 then
   $d.setStatus("off");
+end
+
+rule MOTION_DETECTED_WHILE_AWAY_GUARD_RULE
+when
+  MotionDetected()
+then
+  drools.guard( UnattendedSuspiciousActivityUnit.class );
 end

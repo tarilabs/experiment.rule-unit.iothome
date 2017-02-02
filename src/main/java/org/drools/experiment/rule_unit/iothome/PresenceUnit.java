@@ -1,6 +1,6 @@
 package org.drools.experiment.rule_unit.iothome;
 
-import org.drools.core.ruleunit.RuleUnit;
+import org.kie.api.runtime.rule.RuleUnit;
 
 public class PresenceUnit implements RuleUnit {
 

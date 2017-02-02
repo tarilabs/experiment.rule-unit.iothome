@@ -16,7 +16,6 @@
 package org.drools.experiment.rule_unit.iothome;
 unit PresenceUnit
 
-import org.drools.core.ruleunit.Guard
 import org.drools.experiment.rule_unit.iothome.LivingRoomPresenceUnit;
 
 rule DO_PRESENCE
@@ -31,4 +30,5 @@ rule MOTION_LIVINGROOM_GUARD_RULE
 when
   MotionDetected(location == "LivingRoom")
 then
+  drools.guard( LivingRoomPresenceUnit.class );
 end

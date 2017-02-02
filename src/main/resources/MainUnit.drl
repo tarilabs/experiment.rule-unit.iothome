@@ -14,21 +14,20 @@
 */
 
 package org.drools.experiment.rule_unit.iothome;
-import org.drools.core.ruleunit.Guard
 
 import org.drools.experiment.rule_unit.iothome.PresenceUnit;
 import org.drools.experiment.rule_unit.iothome.AbsenceUnit;
 
 rule PRESENCE_GUARD_RULE
-@Guard( PresenceUnit.class )
 when
   WiFiDevice(name == "mobile")
 then
+  drools.guard( PresenceUnit.class );
 end
 
 rule ABSENCE_GUARD_RULE
-@Guard( AbsenceUnit.class )
 when
   not ( WiFiDevice(name == "mobile") )
 then
+  drools.guard( AbsenceUnit.class );
 end

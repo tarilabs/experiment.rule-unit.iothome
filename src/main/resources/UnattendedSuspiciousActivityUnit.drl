@@ -14,17 +14,11 @@
 */
 
 package org.drools.experiment.rule_unit.iothome;
-unit LivingRoomPresenceUnit
+unit UnattendedSuspiciousActivityUnit
 
-rule DO_LIVINGROOM
+rule DO_ALARM
 when
   eval( true )
 then
-end
-
-rule LIVINGROOM_PRESENCE_TV
-when
-  $tv: Device(name == "TV", status == "off" )
-then
-  modify ($tv) { setStatus("on"); }
+  insert( new Alarm() );
 end

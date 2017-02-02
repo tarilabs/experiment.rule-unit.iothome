@@ -15,10 +15,12 @@
 
 package org.drools.experiment.rule_unit.iothome;
 
-import static org.drools.core.DataSource.asDataSource;
+import static org.kie.api.runtime.rule.DataSource.*;
 import static org.junit.Assert.*;
 
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
@@ -71,33 +73,43 @@ public class RuleTest {
         }
 
         LOG.info("Creating kieSession");
-        DynamicallyBoundSessionImpl session = new DynamicallyBoundSessionImpl();
-        session.bind( kieBase );
+        KieSession session = kieBase.newKieSession();
 
         RuleUnitFactory factory = new RuleUnitFactory()
 //                .bindVariable( "persons", persons )
                 ;
-        session.setRuleUnitFactory( factory );
+        ( (DynamicallyBoundSessionImpl) session ).setRuleUnitFactory( factory );
         
+        List<String> rulesFired = new ArrayList<>();
         session.addEventListener(new DefaultAgendaEventListener(){
             public void afterMatchFired(AfterMatchFiredEvent event) {
                 System.out.println("fired: "+event.getMatch().getRule().getName());
+                rulesFired.add(event.getMatch().getRule().getName());
             }
         });
         session.addEventListener(new DebugAgendaEventListener());
 
         System.out.println("STEP INIT");
         FactHandle mobileFH = session.insert(new WiFiDevice("mobile"));
-        session.insert(new Device("TV", "off"));
+        Device tvDevice = new Device("TV", "off");
+        session.insert(tvDevice);
         session.fireAllRules();
 
         System.out.println("STEP 1");
         FactHandle motionFH = session.insert(new MotionDetected("LivingRoom"));
         session.fireAllRules();
-        session.retract(motionFH);
+        session.delete(motionFH);
+        assertTrue( tvDevice.getStatus().equals("on") );
         
         System.out.println("STEP 2");
-        session.retract(mobileFH);
+        session.delete(mobileFH);
         session.fireAllRules();
+        assertTrue( tvDevice.getStatus().equals("off") );
+        
+        System.out.println("STEP 3");
+        motionFH = session.insert(new MotionDetected("LivingRoom"));
+        session.fireAllRules();
+        session.delete(motionFH);
+        assertTrue( session.getObjects(o -> o instanceof Alarm).size() > 0 );
     }
 }
